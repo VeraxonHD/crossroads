@@ -4,7 +4,8 @@ const Configs = require("../../models/configs").getModel();
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('modmail')
-		.setDescription('Opens the modmail window for this server.'),
+		.setDescription('Opens the modmail window for this server.')
+        .setDMPermission(false),
 	async execute(interaction) {
         const config = await Configs.findOne({where: {guildId: interaction.guildId}});
         if(config.modmailEnabled){

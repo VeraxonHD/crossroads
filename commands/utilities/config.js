@@ -1,10 +1,12 @@
-const { SlashCommandBuilder, channelMention, ChannelType } = require('discord.js');
+const { SlashCommandBuilder, channelMention, ChannelType, PermissionFlagsBits } = require('discord.js');
 const Configs = require('../../models/configs').getModel();
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('config')
 		.setDescription('Configure settings for this server.')
+        .setDMPermission(false)
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommandGroup(scgModmail => 
             scgModmail
                 .setName('modmail')
