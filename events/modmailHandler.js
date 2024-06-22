@@ -32,9 +32,9 @@ module.exports = {
                     name: `Ticket ${newModmail.id}`,
                     type: ChannelType.GuildText,
                     parent: config.modmailCategory,
-                    permisisonOverwrites: [{
+                    permissionOverwrites: [{
                         id: interaction.user.id,
-                        allow: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.EmbedLinks]
+                        allow: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.ViewChannel]
                     }]
                 }).then(async ticketChannel => {
                     createModmail.ticketChannelId = ticketChannel.id;
