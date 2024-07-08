@@ -5,7 +5,8 @@ module.exports = {
     init(sequelize){
         const SignupOptions = sequelize.define('SignupOptions', {
             guildId: DataTypes.STRING,
-            text: DataTypes.STRING
+            text: DataTypes.STRING,
+            emoji: DataTypes.STRING
         });
         this.model = SignupOptions;
         return SignupOptions;

@@ -7,6 +7,6 @@ module.exports = {
         var now = new Date();
         console.log(`[OKAY] Logged in at ${now.toLocaleString("en-GB")}`);
 
-        await client.sequelize.sync({ alter: true });
+        await client.sequelize.sync({ alter: false });
     }
 };

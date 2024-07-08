@@ -4,9 +4,23 @@ module.exports = {
     name: 'SignupAttachments',
     init(sequelize){
         const SignupAttachments = sequelize.define('SignupAttachments', {
-            signupId: DataTypes.INTEGER,
-            optionId: DataTypes.INTEGER,
-            actionRowIndex: DataTypes.INTEGER
+            signupId: {
+                type: DataTypes.STRING,
+                references: {
+                    model: 'Signups',
+                    key: 'id'
+                }
+            },
+            optionId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'SignupOptions',
+                    key: 'id'
+                }
+            },
+            actionRowIndex: DataTypes.INTEGER,
+            maxAllowed: DataTypes.INTEGER,
+            fieldIndex: DataTypes.INTEGER
         });
         this.model = SignupAttachments;
         return SignupAttachments;
