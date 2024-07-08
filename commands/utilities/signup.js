@@ -6,27 +6,6 @@ const SignupResponses = require('../../models/signupresponses').getModel();
 const SignupAttachments = require('../../models/signupattachments').getModel();
 const { Op } = require('sequelize');
 
-/* Signups.hasMany(SignupResponses, {
-    foreignKey: {
-        name: 'signupId'
-    }
-});
-Signups.hasMany(SignupAttachments, {
-    foreignKey: {
-        name: 'signupId'
-    }
-});
-
-SignupResponses.belongsTo(Signups);
-SignupResponses.hasOne(SignupOptions);
-
-SignupAttachments.belongsTo(Signups);
-SignupAttachments.hasOne(SignupOptions);
-
-SignupOptions.belongsTo(SignupAttachments);
-SignupOptions.belongsTo(SignupResponses); */
-
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('signup')
@@ -165,13 +144,13 @@ module.exports = {
                 channelId: emMsg.channelId
             });
             await createSignup.save();
-            await interaction.reply(`Created signup for event successfully.`);
+            await interaction.reply({content: `Created signup for event successfully.`, ephemeral: true});
         }else if(subCommandGroup === "options"){
             if(subCommand === 'list'){
                 //TODO: update with emoji setting
                 const options = await SignupOptions.findAll({where: {guildId: interaction.guild.id}});
                 if(options.length == 0){
-                    await interaction.reply(`No options have been created for this Guild.`);
+                    await interaction.reply({content: `No options have been created for this Guild.`, ephemeral: true});
                 }else{
                     var optList = [];
                     for(var opt in options){
@@ -180,7 +159,7 @@ module.exports = {
                     const embed = new EmbedBuilder()
                         .setTitle(`List of options in this Guild`)
                         .setDescription(optList.join(`\n`));
-                    await interaction.reply({embeds: [embed]});
+                    await interaction.reply({embeds: [embed], ephemeral: true});
                 }
             }else if(subCommand === 'create'){
                 const text = interaction.options.getString(`text`);
@@ -198,9 +177,9 @@ module.exports = {
                             emoji: emoji
                         });
                         await newOption.save();
-                        await interaction.reply(`Created option (ID: ${newOption.id}) successfully`);
+                        await interaction.reply({content: `Created option (ID: ${newOption.id}) successfully`, ephemeral: true});
                     }catch(err){
-                        await interaction.reply("Could not find an emoji with that identifier. Please make sure the emoji provided is the only text in the `Emoji` field, and that the bot is on the server that that Emoji belongs to.");
+                        await interaction.reply({content: "Could not find an emoji with that identifier. Please make sure the emoji provided is the only text in the `Emoji` field, and that the bot is on the server that that Emoji belongs to.", ephemeral: true});
                     }
                 }else{
                     const newOption = await SignupOptions.create({
@@ -208,24 +187,24 @@ module.exports = {
                         text: text
                     });
                     await newOption.save();
-                    await interaction.reply(`Created option (ID: ${newOption.id}) successfully`);
+                    await interaction.reply({content: `Created option (ID: ${newOption.id}) successfully`, ephemeral: true});
                 }
             }else if(subCommand === 'delete'){
                 const optionId = interaction.options.getInteger('option-id');
                 const options = await SignupOptions.findOne({where: {[Op.and]: [{guildId: interaction.guild.id}, {id: optionId}]}});
                 if(options){
                     options.destroy().then(async () => {
-                        await interaction.reply(`Deleted option with ID ${optionId} successfully.`);
+                        await interaction.reply({content: `Deleted option with ID ${optionId} successfully.`, ephemeral: true});
                     }).catch(async err => {
                         if(err.original.errno == 19){
-                            await interaction.reply(`That option cannot be deleted as it has been used on a previous signup.`);
+                            await interaction.reply({content: `That option cannot be deleted as it has been used on a previous signup.`, ephemeral: true});
                         }else{
-                            await interaction.reply(`An error occurred while deleting that option. Please try again later.`);
+                            await interaction.reply({content: `An error occurred while deleting that option. Please try again later.`, ephemeral: true});
                         }
                         console.error(err);
                     });
                 }else{
-                    await interaction.reply(`No such option with ID ${optionId} exists in this Guild.`);
+                    await interaction.reply({content: `No such option with ID ${optionId} exists in this Guild.`, ephemeral});
                 }
             }else if(subCommand === 'attach'){
                 const signupId = interaction.options.getString('signup-id');
@@ -236,7 +215,7 @@ module.exports = {
                 const option = await SignupOptions.findOne({where: {[Op.and]: [{guildId: interaction.guild.id},{id: optionId}]}});
     
                 if(attachment){
-                    await interaction.reply(`That option already exists on that signup and cannot be used again.`);
+                    await interaction.reply({content: `That option already exists on that signup and cannot be used again.`, ephemeral: true});
                 }else{
                     if(signup){
                         if(option){
@@ -290,10 +269,10 @@ module.exports = {
                                 interaction.reply({content: `Failed to add option`, ephemeral: true});
                             });
                         }else{
-                            await interaction.reply(`No option with that ID exists in this guild.`);
+                            await interaction.reply({content: `No option with that ID exists in this guild.`, ephemeral: true});
                         }
                     }else{
-                        await interaction.reply(`No signup with that ID exists in this guild.`);
+                        await interaction.reply({content: `No signup with that ID exists in this guild.`, ephemeral: true});
                     }
                 }
             }
