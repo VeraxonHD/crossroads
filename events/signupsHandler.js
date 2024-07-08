@@ -63,15 +63,12 @@ module.exports = {
                         }
                     }
                     await SignupResponses.create({
-                        where: {
-                            signupId: interaction.message.id,
-                            memberId: interaction.member.id,
-                            attachmentId: attachment.id
-                        }
+                        signupId: interaction.message.id,
+                        memberId: interaction.member.id,
+                        attachmentId: attachment.id
                     });
                     
                     await attachment.update({fieldIndex: embed.fields.length - 1});
-                    await attachment.save();
 
                     await interaction.reply({content: `You have signed up for **${attachment.SignupOption.text}**.`, ephemeral: true});
                 
