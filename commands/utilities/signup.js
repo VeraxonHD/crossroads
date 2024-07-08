@@ -2,7 +2,6 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ButtonBuilder, B
 const Configs = require('../../models/configs').getModel();
 const Signups = require('../../models/signups').getModel();
 const SignupOptions = require('../../models/signupoptions').getModel();
-const SignupResponses = require('../../models/signupresponses').getModel();
 const SignupAttachments = require('../../models/signupattachments').getModel();
 const { Op } = require('sequelize');
 
