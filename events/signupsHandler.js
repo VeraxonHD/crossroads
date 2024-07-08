@@ -48,7 +48,6 @@ module.exports = {
 
                 //If field for this option does not exist
                 if(!attachment.fieldIndex){
-                    console.log("doesnt exist")
                     var optionEmoji = await interaction.client.emojis.resolve(attachment.SignupOption.emoji);
                     if(optionEmoji){
                         if(attachment.maxAllowed){
