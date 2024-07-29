@@ -50,6 +50,11 @@ module.exports = {
                         .setName('notify-role')
                         .setDescription('Role to ping on Signup message post')
                 )
+                .addUserOption(scCreateOwnerOpt => 
+                    scCreateOwnerOpt
+                        .setName('owner')
+                        .setDescription('The owner/author of the event')
+                )
         )
         .addSubcommandGroup(scgOptions => 
             scgOptions
@@ -71,6 +76,26 @@ module.exports = {
                                 .setRequired(true)
                         ).addStringOption(scOptionsCreateEmoji => 
                             scOptionsCreateEmoji
+                                .setName('emoji')
+                                .setDescription('Optional emoji for this option')
+                        )
+                )
+                .addSubcommand(scOptionsEdit => 
+                    scOptionsEdit
+                        .setName('edit')
+                        .setDescription('Edit an existing option')
+                        .addStringOption(scOptionsEditID => 
+                            scOptionsEditID
+                                .setName('id')
+                                .setDescription('Text to ID for this option')
+                                .setRequired(true)
+                        ).addStringOption(scOptionsEditText => 
+                            scOptionsEditText
+                                .setName('text')
+                                .setDescription('Text to display for this option')
+                                .setRequired(true)
+                        ).addStringOption(scOptionsEditEmoji => 
+                            scOptionsEditEmoji
                                 .setName('emoji')
                                 .setDescription('Optional emoji for this option')
                         )
@@ -108,6 +133,17 @@ module.exports = {
                                 .setDescription('Optional max users allowed for this option')
                         )
                 )
+        )
+        .addSubcommand(scClose => 
+            scClose
+                .setName("close")
+                .setDescription("Close the signup to prevent further registrations")
+                .addStringOption(scCloseIDOpt => 
+                    scCloseIDOpt
+                        .setName("id")
+                        .setDescription("Message ID of the signup to close")
+                        .setRequired(true)
+                )
         ),
 	async execute(interaction) {
         const config = await Configs.findOne({where: {guildId: interaction.guild.id}});
@@ -120,9 +156,11 @@ module.exports = {
             const start = interaction.options.getString('start');
             const end = interaction.options.getString('end');
             const pingRole = interaction.options.getRole('notify-role');
+            const owner = interaction.options.getUser('owner');
+            if(!owner){owner = interaction.user;}
 
             const embed = new EmbedBuilder()
-                .setAuthor({iconURL: interaction.member.avatarURL()? interaction.member.avatarURL(): interaction.user.avatarURL(), name: interaction.user.username})
+                .setAuthor({iconURL: owner.avatarURL(), name: owner.username})
                 .setTitle(title)
                 .setDescription(description)
                 .setColor('00bdf7')
@@ -275,6 +313,25 @@ module.exports = {
                     }
                 }
             }
-        }
+        }/*else if(!subCommandGroup && subCommand === 'close'){
+            const signupId = interaction.options.getString("id");
+
+            const signup = await Signups.findOne({where: {[Op.and]: [{id: signupId},{guildId: interaction.guild.id}]}});
+            if(signup){
+                var signupMessageChannel = await interaction.guild.channels.fetch(signup.channelId);
+                var signupMessage = await signupMessageChannel.messages.fetch(signup.id);
+                var signupMessgageComponents = signupMessage.components;
+                signupMessgageComponents.forEach(componentRow => {
+                    componentRow.forEach(component => {
+                        component.disabled = true;
+                        console.log(component);
+                    });
+                });
+                await signupMessage.edit({components: signupMessgageComponents});
+                await interaction.reply("New responses disabled for this signup.");
+            }else{
+                await interaction.reply({content: "That signup does not exist. Please use the message ID as a reference.", ephemeral: true});
+            }
+        }*/
 	},
 };
