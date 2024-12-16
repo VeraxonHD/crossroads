@@ -7,7 +7,9 @@ module.exports = {
             guildId: DataTypes.STRING,
             logchannelId: DataTypes.STRING,
             modmailEnabled: DataTypes.BOOLEAN,
-            modmailCategory: DataTypes.STRING
+            modmailCategory: DataTypes.STRING,
+            starboardEnabled: DataTypes.BOOLEAN,
+            starboardChannel: DataTypes.BOOLEAN
         });
         this.model = Configs;
         return Configs;

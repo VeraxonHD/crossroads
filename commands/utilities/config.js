@@ -44,6 +44,33 @@ module.exports = {
                         .setDescription("Channel to set")
                         .setRequired(true)
                 )
+        )
+        .addSubcommandGroup(scgStarboard => 
+            scgStarboard
+                .setName('starboard')
+                .setDescription('Configure Starboard')
+                .addSubcommand(scStarboardEnabled => 
+                    scStarboardEnabled
+                        .setName('enable')
+                        .setDescription('Toggle starboard on/off')
+                        .addBooleanOption(scStarboardEnabledOpts => 
+                            scStarboardEnabledOpts
+                                .setName("enabled")
+                                .setDescription("Whether or not to enable starboard")
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand(scStarboardChannel => 
+                    scStarboardChannel
+                        .setName('channel')
+                        .setDescription('Set starboard channel')
+                        .addChannelOption(scStarboardChannelOpts => 
+                            scStarboardChannelOpts
+                                .setName("channel")
+                                .setDescription("Channel to set")
+                                .setRequired(true)
+                        )
+                )
         ),
 	async execute(interaction) {
         const config = await Configs.findOne({where: {guildId: interaction.guild.id}});
@@ -79,12 +106,36 @@ module.exports = {
                     if(newCategory.type == ChannelType.GuildCategory){
                         config.modmailCategory = newCategory.id;
                         await config.save();
-                        interaction.reply(`Updated modmail enabled to \`${newCategory.name}\``);
+                        interaction.reply(`Updated modmail category to \`${newCategory.name}\``);
                     }else{
                         interaction.reply(`Sorry, that is not a Category channel. Please provide the ID of a category channel.`);
                     }
                 }catch(err){
-                    interaction.reply("Unable to change the modmail enabled setting. Please try again later.");
+                    interaction.reply("Unable to change the modmail category setting. Please try again later.");
+                }
+            }
+        }else if(subCommandGroup === 'starboard'){
+            if(subCommand === 'enable'){
+                try{
+                    var newState = interaction.options.getBoolean('enabled');
+                    config.starboardEnabled = newState;
+                    await config.save();
+                    interaction.reply(`Updated starboard enabled to \`${newState}\``);
+                }catch(err){
+                    interaction.reply("Unable to change the starboard enabled setting. Please try again later.");
+                }
+            }else if(subCommand === 'channel'){
+                try{
+                    var newChannel = interaction.options.getChannel('channel');
+                    if(newChannel.type == ChannelType.GuildText){
+                        config.starboardChannel = newChannel.id;
+                        await config.save();
+                        interaction.reply(`Updated starboard channel to \`${newChannel.name}\``);
+                    }else{
+                        interaction.reply(`Sorry, that is not a Text channel. Please provide the ID of a Text channel.`);
+                    }
+                }catch(err){
+                    interaction.reply("Unable to change the starboard channel setting. Please try again later.");
                 }
             }
         }
