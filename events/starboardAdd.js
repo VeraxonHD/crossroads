@@ -70,8 +70,6 @@ module.exports = {
                         })
                     }
                 }
-            }else{
-                console.log("starboardEntry picked non-⭐ emoji... Ignoring.")
             }
         }        
     }
