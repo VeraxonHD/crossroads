@@ -5,7 +5,7 @@ const Configs = require("../models/configs.js").getModel();
 
 module.exports = {
     name: Events.MessageReactionAdd,
-    niceName: "Starboard Handler",
+    niceName: "starboardEntry Handler",
     once: false,
     async execute(messageReaction, user, details){
         // Get full message if partial
@@ -18,26 +18,26 @@ module.exports = {
             }
         }
 
-        const guild = messageReaction.message.guild;
+        const message = messageReaction.message;
+        const guild = message.guild;
 
         if(user.id === messageReaction.client.user.id) return;
 
         const config = await Configs.findOne({where: {guildId: guild.id}});
-        if(config.starboardEnabled){
-            if(messageReaction.emoji.name == '⭐'){
-                const starboard = await Starboards.findOne({where: {messageId: messageReaction.message.id}})
-                if(starboard){
-                    await starboard.increment('stars');
+        if(config.starboardEnabled && message.channel.id != guild.starboardChannel){
+            if(messageReaction.emoji.name == '⭐' && messageReaction.count >= 2){
+                const starboardEntry = await Starboards.findOne({where: {messageId: message.id}})
+                if(starboardEntry){
+                    await starboardEntry.increment('stars');
                     const starboardChannel = await guild.channels.fetch(config.starboardChannel);
                     if(starboardChannel){
-                        const message = await starboardChannel.messages.fetch(starboard.starboardEntryId);
+                        const message = await starboardChannel.messages.fetch(starboardEntry.starboardEntryId);
                         var embed = message.embeds[0]
-                        await message.edit({content: `**${starboard.stars + 1}**⭐`, embeds: [embed]})
+                        await message.edit({content: `**${starboardEntry.stars + 1}**⭐`, embeds: [embed]})
                     }
                 }else{
                     const starboardChannel = await guild.channels.fetch(config.starboardChannel);
                     if(starboardChannel){
-                        const message = messageReaction.message;
                         if(message.partial){
                             try{
                                 await message.fetch()
@@ -60,18 +60,18 @@ module.exports = {
                         if(message.attachments.size > 0){
                             embed.setImage(message.attachments.first().url)
                         }
-                        await starboardChannel.send({embeds: [embed], content: "**1**⭐"}).then(async (sbMsg) => {
+                        await starboardChannel.send({embeds: [embed], content: "**2**⭐"}).then(async (sbMsg) => {
                             await Starboards.create({
                                 starboardEntryId: sbMsg.id,
                                 messageId: message.id,
                                 channelId: message.channel.id,
-                                stars: 1
+                                stars: 2
                             })
                         })
                     }
                 }
             }else{
-                console.log("Starboard picked non-⭐ emoji... Ignoring.")
+                console.log("starboardEntry picked non-⭐ emoji... Ignoring.")
             }
         }        
     }
