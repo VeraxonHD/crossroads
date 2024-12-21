@@ -9,7 +9,7 @@ module.exports = {
             modmailEnabled: DataTypes.BOOLEAN,
             modmailCategory: DataTypes.STRING,
             starboardEnabled: DataTypes.BOOLEAN,
-            starboardChannel: DataTypes.BOOLEAN
+            starboardChannel: DataTypes.STRING
         });
         this.model = Configs;
         return Configs;
