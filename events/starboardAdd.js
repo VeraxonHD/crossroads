@@ -24,7 +24,7 @@ module.exports = {
         if(user.id === messageReaction.client.user.id) return;
 
         const config = await Configs.findOne({where: {guildId: guild.id}});
-        if(config.starboardEnabled && message.channel.id != guild.starboardChannel){
+        if(config.starboardEnabled && message.channel.id != config.starboardChannel){
             if(messageReaction.emoji.name == '⭐' && messageReaction.count >= 2){
                 const starboardEntry = await Starboards.findOne({where: {messageId: message.id}})
                 if(starboardEntry){
