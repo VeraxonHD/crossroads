@@ -1,13 +1,13 @@
 require("dotenv").config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
 const Sequelize = require("sequelize");
 
 /* CLIENT CONSTRUCTOR */
 const client = new Client({
-    partials: ["MESSAGE", "REACTION", "CHANNEL"],
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages]
+    partials: [Partials.Message, Partials.Reaction, Partials.Channel],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent]
 });
 
 /* SETUP SEQUELIZE */
