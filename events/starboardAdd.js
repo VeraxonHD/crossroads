@@ -28,8 +28,8 @@ module.exports = {
             const emojiName = messageReaction.emoji.name,
             emojiCount = messageReaction.count,
             otherEmoji = emojiName == '⭐' ? '🔥' : '⭐',
-            otherEmojiCount = emojiName == '⭐' ? message.reactions.cache.get('⭐').count : message.reactions.cache.get('🔥').count;
-            if((emojiName == '⭐') || (emojiName == '🔥') && emojiCount >= 2){
+            otherEmojiCount = emojiName == '⭐' ? (message.reactions.cache.get('⭐').count) : message.reactions.cache.get('🔥').count;
+            if((emojiName == '⭐' || emojiName == '🔥') && emojiCount >= 2){
                 const starboardEntry = await Starboards.findOne({where: {messageId: message.id}})
                 if(starboardEntry){
                     if(starboardEntry.stars <= emojiCount || starboardEntry.fires <= emojiCount) return;
