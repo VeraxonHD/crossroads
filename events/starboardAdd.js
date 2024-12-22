@@ -25,15 +25,25 @@ module.exports = {
 
         const config = await Configs.findOne({where: {guildId: guild.id}});
         if(config.starboardEnabled && message.channel.id != config.starboardChannel){
-            if(messageReaction.emoji.name == '⭐' && messageReaction.count >= 2){
+            const emojiName = messageReaction.emoji.name,
+            emojiCount = messageReaction.count,
+            otherEmoji = emojiName == '⭐' ? '🔥' : '⭐',
+            otherEmojiCount = emojiName == '⭐' ? (message.reactions.cache.get('⭐').count) : message.reactions.cache.get('🔥').count;
+            if((emojiName == '⭐' || emojiName == '🔥') && emojiCount >= 2){
                 const starboardEntry = await Starboards.findOne({where: {messageId: message.id}})
                 if(starboardEntry){
-                    await starboardEntry.increment('stars');
+                    if(starboardEntry.stars <= emojiCount || starboardEntry.fires <= emojiCount) return;
+                    switch(emojiName){
+                        case '⭐':
+                            await starboardEntry.increment('stars')
+                        case '🔥':
+                            await starboardEntry.increment('fires')
+                    }
                     const starboardChannel = await guild.channels.fetch(config.starboardChannel);
                     if(starboardChannel){
                         const message = await starboardChannel.messages.fetch(starboardEntry.starboardEntryId);
                         var embed = message.embeds[0]
-                        await message.edit({content: `**${starboardEntry.stars + 1}**⭐`, embeds: [embed]})
+                        await message.edit({content: `**${starboardEntry.stars + 1}**⭐, **${starboardEntry.fires + 1}🔥`, embeds: [embed]})
                     }
                 }else{
                     const starboardChannel = await guild.channels.fetch(config.starboardChannel);
@@ -60,12 +70,13 @@ module.exports = {
                         if(message.attachments.size > 0){
                             embed.setImage(message.attachments.first().url)
                         }
-                        await starboardChannel.send({embeds: [embed], content: "**2**⭐"}).then(async (sbMsg) => {
+                        await starboardChannel.send({embeds: [embed], content: `**${emojiCount}**${emojiName}, **${otherEmojiCount}**${otherEmoji}`}).then(async (sbMsg) => {
                             await Starboards.create({
                                 starboardEntryId: sbMsg.id,
                                 messageId: message.id,
                                 channelId: message.channel.id,
-                                stars: 2
+                                stars: emojiName == '⭐' ? emojiCount : otherEmojiCount,
+                                fires: emojiName == '🔥' ? emojiCount : otherEmojiCount
                             })
                         })
                     }

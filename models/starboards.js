@@ -15,9 +15,12 @@ module.exports = {
                 unique: true
             },
             channelId: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING
             },
             stars: {
+                type: DataTypes.NUMBER
+            },
+            fires: {
                 type: DataTypes.NUMBER
             }
         });
