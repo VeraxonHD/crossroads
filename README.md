@@ -1,8 +1,7 @@
-# Mithrandir
-A modular discord bot design, for use in empowering communities to create, protect and support.
+# Crossroads
+A Discord bot providing sets of utilities, designed for Discord communities centered around games.
 
 ## Features
-- Command and Event modules
-- Database storage with SQL
-- Some pre-built modules such as Modmail, taking full advantage of modern Discord features
-- And more!
+- Modular design, easy to add new commands and event handlers
+- Encourages the use of the latest Discord features, such as Interations and Modals
+- Advanced features such as event sign-up forms
